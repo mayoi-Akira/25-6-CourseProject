@@ -2,6 +2,8 @@ import pymysql
 import re
 from flask import Flask, request, jsonify
 '''
+错误码：
+ 
 0：成功
 1：两次密码不匹配
 2：密码不合法
