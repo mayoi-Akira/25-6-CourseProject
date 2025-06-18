@@ -17,7 +17,7 @@ con = pymysql.connect(host='localhost',
                       port=3306,
                       user='root',
                       password='112358',
-                      database='test',
+                      database='root',
                       charset='utf8')
 
 app = Flask(__name__)
@@ -47,7 +47,7 @@ def register():
     cur = con.cursor()
 
     sql = f'''
-        select 1 from user
+        select 1 from users
         where name="{user_name}"
     '''
     cur.execute(sql)
@@ -55,7 +55,7 @@ def register():
         return jsonify({'code': 4})
 
     sql = f'''
-        insert into user(name, password, role)
+        insert into users(name, password, role)
         values("{user_name}", "{password}", "{role}")
     '''
 
