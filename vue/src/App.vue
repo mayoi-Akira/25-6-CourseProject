@@ -151,7 +151,7 @@ html, body, #app {
 .auth-wrapper {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #d27376 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #c84623 30%, #e8c6c6 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -162,7 +162,7 @@ html, body, #app {
   max-width: 400px;
   background: rgba(255, 255, 255, 0.85);
   padding: 2rem;
-  border-radius: 0.5rem;
+  border-radius: 1.3rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
 }
@@ -177,6 +177,7 @@ html, body, #app {
   background: #f0f0f0;
   border: none;
   cursor: pointer;
+  border-radius: 1.3rem;
   font-size: 1rem;
 }
 .tabs button.active {
@@ -203,7 +204,8 @@ input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 0.25rem;
+  border-radius: 1.3rem;
+
 }
 
 button[type="submit"] {
@@ -212,9 +214,10 @@ button[type="submit"] {
   background-color: #f0768b;
   color: white;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 1.3rem;
   cursor: pointer;
   font-size: 1rem;
+  margin-top: 30px;
 }
 
 button[type="submit"]:hover {
