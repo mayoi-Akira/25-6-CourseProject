@@ -69,6 +69,7 @@ export default {
 </script>
 
 <template>
+  <div class="auth-wrapper">
   <div class="login-container">
     <div class="tabs">
       <button :class="{ active: !isRegister }" @click="isRegister = false">登录</button>
@@ -135,33 +136,48 @@ export default {
       <p v-if="regErrorMessage" class="error">{{ regErrorMessage }}</p>
     </div>
   </div>
+</div>
 </template>
 
+<style>
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+</style>
+
 <style scoped>
+.auth-wrapper {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #d27376 0%, #ffffff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .login-container {
-  width: 300%;
-  max-width: 40vw;
-  margin: 20vh 20vh;
-  padding: 4vh 3vw;
-  border: 0.1vw solid #ccc;
-  border-radius: 1vw;
-  box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
-  font-size: 1.1vw;
 }
 
 .tabs {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 3vh;
+  margin-bottom: 1.5rem;
 }
 .tabs button {
   flex: 1;
-  padding: 1.5vh 0;
+  padding: 0.75rem;
   background: #f0f0f0;
   border: none;
   cursor: pointer;
-  font-size: 1vw;
+  font-size: 1rem;
 }
 .tabs button.active {
   background: #f0768b;
@@ -170,48 +186,44 @@ export default {
 
 h2 {
   text-align: center;
-  margin-bottom: 3vh;
-  font-size: 1.4vw;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 2vh;
+  margin-bottom: 1rem;
 }
 
 label {
   display: block;
-  margin-bottom: 1vh;
-  font-size: 0.95vw;
+  margin-bottom: 0.5rem;
 }
 
 input {
   width: 100%;
-  padding: 1.2vh 1vw;
-  box-sizing: border-box;
-  border: 0.1vw solid #ccc;
-  border-radius: 0.4vw;
-  font-size: 1vw;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
 }
 
-button {
+button[type="submit"] {
   width: 100%;
-  padding: 1.5vh;
+  padding: 0.75rem;
   background-color: #f0768b;
   color: white;
   border: none;
-  border-radius: 0.4vw;
+  border-radius: 0.25rem;
   cursor: pointer;
-  font-size: 1.1vw;
+  font-size: 1rem;
 }
 
-button:hover {
+button[type="submit"]:hover {
   background-color: pink;
 }
 
 .error {
   color: red;
-  margin-top: 2vh;
+  margin-top: 0.5rem;
   text-align: center;
-  font-size: 1vw;
 }
 </style>

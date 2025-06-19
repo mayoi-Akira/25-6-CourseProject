@@ -2,19 +2,6 @@ import pymysql
 import re
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-'''
-状态码：
- 
-200:"成功",
-301:"两次密码不匹配",
-302:"密码不合法",
-303:"用户名不合法",
-304:"用户已存在",
-305:"未获取到JSON",
-306:"用户不存在",
-307:"密码不匹配",
-310:"数据库错误",
-'''
 
 con = pymysql.connect(host='localhost',
                       port=3306,
@@ -33,24 +20,23 @@ now_role = ""
 
 @app.route('/register', methods=['POST'])
 def register():
-
     data = request.get_json()
     if not data:
-        return jsonify({'message': "未获取到JSON"}), 305
+        return jsonify({'message': "未获取到JSON"}), 304
 
     username, password, password_Confirm, role = \
     data.get('username'), data.get('password'), data.get('passwordConfirm'), data.get('role')
 
     if (password != password_Confirm):
-        return jsonify({'message': "两次密码不一致!"}), 301
+        return jsonify({'message': "两次密码不一致!"}), 403
 
-    password_pattern = re.compile(r'^[\x20-\x7E]{5,20}$')
     username_pattern = re.compile(r'^[A-Za-z0-9_]{5,20}$')
+    password_pattern = re.compile(r'^[!-~]{5,20}$')
 
     if not bool(username_pattern.fullmatch(username)):
-        return jsonify({'message': "用户名格式不合法!"}), 303
+        return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及\'_\'"}), 403
     if not bool(password_pattern.fullmatch(password)):
-        return jsonify({'message': "密码仅能包含!"}), 302
+        return jsonify({'message': "密码长度需在5-20之间，且不能含有特殊字符"}), 403
 
     cur = con.cursor()
 
@@ -62,11 +48,10 @@ def register():
     try:
         cur.execute(sql)
     except:
-        return jsonify({'message': "数据库错误"}), 310
+        return jsonify({'message': "数据库错误"}), 500
 
     if cur.fetchone():
-        return jsonify({'message': "用户名已存在"}), 304
-
+        return jsonify({'message': "用户名已存在"}), 403
     #加入新用户
     sql = f'''
         insert into users(username, password, role)
@@ -76,7 +61,7 @@ def register():
     try:
         cur.execute(sql)
     except:
-        return jsonify({'message': "数据库错误"}), 301
+        return jsonify({'message': "数据库错误"}), 500
     con.commit()
     cur.close()
     return jsonify({'message': "成功"}), 200
@@ -86,7 +71,7 @@ def register():
 def login():
     data = request.get_json()
     if not data:
-        return jsonify({'message': "未获取到JSON"}), 305
+        return jsonify({'message': "未获取到JSON"}), 304
 
     username = data.get('username')
     password = data.get('password')
@@ -100,16 +85,16 @@ def login():
     try:
         cur.execute(sql)
     except:
-        return jsonify({'message': "数据库错误"}), 310
+        return jsonify({'message': "数据库错误"}), 500
 
     result = cur.fetchone()
 
     #未找到
     if not result:
-        return jsonify({'message': "用户不存在"}), 306
+        return jsonify({'message': "用户不存在"}), 403
 
     if result[1] != password:
-        return jsonify({'message': "密码错误"}), 300
+        return jsonify({'message': "密码错误"}), 403
 
     global now_user, now_role
     now_user, now_role = result[0], result[2]
