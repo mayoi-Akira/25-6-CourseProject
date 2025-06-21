@@ -67,7 +67,34 @@ export default {
         this.regErrorMessage = '网络异常，请稍后重试'
       }
     },
+    async fetchData() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/name', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'get' }),
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (data.name !== "") {
+            this.username = data.name
+            console.log(this.username)
+          }
+        } else {
+          throw new Error(`${response.status}`)
+        }
+      } catch (err) {
+        alert(err)
+      }
+
+    },
   },
+  mounted() {
+    if (this.username === "") {
+      this.fetchData()
+    }
+  },
+
 }
 </script>
 

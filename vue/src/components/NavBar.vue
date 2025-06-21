@@ -9,17 +9,16 @@
       <a href="https://gitee.com/mayoi_Akira" target="_blank"><img src="../assets/gittee.png" width="35" height="35"
           class="link-img"></a>
     </div>
-    <el-menu-item index="2">主页</el-menu-item>
-    <el-menu-item index="3">数据集上传</el-menu-item>
+    <el-menu-item index="2"><img src="../assets/home.png" width="20" height="20">&nbsp;主页</el-menu-item>
+    <el-menu-item index="3">数据集管理</el-menu-item>
     <el-menu-item index="4">模型训练</el-menu-item>
     <el-menu-item index="5">预测</el-menu-item>
     <el-sub-menu index="6">
       <template #title>
         <img src="../assets/user_img.jpg" height="45" width="45" class="user_img" />
       </template>
-      <el-menu-item index="6-1"><img src="../assets/user_img.jpg" height="20" width="20" class="user_img" /> {{
-        user_name
-        }}</el-menu-item>
+      <el-menu-item index="6-1"><img src="../assets/user_img.jpg" height="20" width="20" class="user_img" />
+        &nbsp;&nbsp;{{ user_name }}</el-menu-item>
       <el-menu-item index="6-1">个人主页</el-menu-item>
       <el-menu-item index="6-2">退出登录</el-menu-item>
     </el-sub-menu>
@@ -27,7 +26,6 @@
 </template>
 
 <script lang="ts">
-import { throwError } from 'element-plus/es/utils/error.mjs'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -44,9 +42,14 @@ export default defineComponent({
   methods: {
     handleSelect(key: string, keyPath: string[]) {
       console.log(key)
-      if (key == '2') {
+      if (key == '2')
         this.$router.push({ name: 'home' })
-      }
+      else if (key === '3')
+        this.$router.push({ name: 'dataset' })
+      else if (key == '4')
+        this.$router.push({ name: 'model' })
+      else if (key == '5')
+        this.$router.push({ name: 'predict' })
       else if (keyPath[1] === '6-2') {
         this.cancel()
         this.$router.push({ name: 'login' })
@@ -61,7 +64,7 @@ export default defineComponent({
         })
         if (response.ok) {
           const data = await response.json()
-          if (data.name == "") {
+          if (data.id == 0 && this.$route.name != 'login') {
             alert("未登录，请前往登录");
             this.$router.push({ name: 'login' })
             return
@@ -95,7 +98,15 @@ export default defineComponent({
   },
   mounted() {
     this.fetchData()
-  }
+    console.log(this.role)
+  },
+  // watch: {
+  //   '$route.fullPath'() {
+  //     this.fetchData()
+  //   }
+  // }
+
+
 })
 </script>
 
@@ -111,10 +122,6 @@ export default defineComponent({
   background: linear-gradient(315deg, #FB7299, #EAE1E7);
 }
 
-::v-deep .appmenu .el-menu-item:hover,
-::v-deep .appmenu .el-sub-menu__title:hover {
-  color: #66bb6a;
-}
 
 .el-menu-item {
   font-size: 1.2rem;

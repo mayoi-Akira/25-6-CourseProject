@@ -24,10 +24,10 @@ def oper():
     data = request.get_json()
     op = data.get('op')
     if op == 'cancel':
-        now_user, now_id, now_role = "", 0, ""
+        now_id, now_role = 0, ""
         return jsonify({'status': 'success'})
     elif op == 'get':
-        return jsonify({'name': now_user, "role": now_role})
+        return jsonify({'name': now_user, "role": now_role, "id": now_id})
 
 
 @app.route('/register', methods=['POST'])
