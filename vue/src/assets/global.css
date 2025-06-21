@@ -1,0 +1,15 @@
+.my-menu .el-menu-item,
+.my-menu .el-sub-menu__title {
+  color: black !important;
+}
+
+.my-menu .el-menu-item.is-active,
+.my-menu .el-sub-menu__title.is-active {
+  background-color:#FFC0CB ;
+  color: rgb(110, 182, 211) !important;
+}
+.el-menu--horizontal .el-menu-item:hover,
+.el-menu--horizontal .el-sub-menu__title:hover {
+  background-color: #FFC0CB !important;
+}
+

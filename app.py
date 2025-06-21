@@ -70,6 +70,7 @@ def register():
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
+    print(data)
     if not data:
         return jsonify({'message': "未获取到JSON"}), 304
 
