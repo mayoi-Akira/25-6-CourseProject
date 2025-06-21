@@ -17,6 +17,9 @@
       <template #title>
         <img src="../assets/user_img.jpg" height="45" width="45" class="user_img" />
       </template>
+      <el-menu-item index="6-1"><img src="../assets/user_img.jpg" height="20" width="20" class="user_img" /> {{
+        user_name
+        }}</el-menu-item>
       <el-menu-item index="6-1">个人主页</el-menu-item>
       <el-menu-item index="6-2">退出登录</el-menu-item>
     </el-sub-menu>
@@ -24,31 +27,75 @@
 </template>
 
 <script lang="ts">
+import { throwError } from 'element-plus/es/utils/error.mjs'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'NavMenu',
 
-  // 1. data(): 用来声明响应式数据
   data() {
     return {
       activeIndex: '1',
+      user_name: "",
+      role: ""
     }
   },
 
-  // 2. methods: 定义所有模板中会调用的函数
   methods: {
     handleSelect(key: string, keyPath: string[]) {
       console.log(key)
-      // 当用户点击“注销”时（keyPath[1] === '2-2'）
       if (key == '2') {
         this.$router.push({ name: 'home' })
       }
       else if (keyPath[1] === '6-2') {
+        this.cancel()
         this.$router.push({ name: 'login' })
+      }
+    },
+    async fetchData() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/name', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'get' }),
+        })
+        if (response.ok) {
+          const data = await response.json()
+          if (data.name == "") {
+            alert("未登录，请前往登录");
+            this.$router.push({ name: 'login' })
+            return
+          }
+          this.user_name = data.name
+          this.role = data.role
+        } else {
+          throw new Error(`${response.status}`)
+        }
+      } catch (err) {
+        alert(err)
+      }
+
+    },
+    async cancel() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/name', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: 'cancel' }),
+        })
+        if (response.ok) {
+          return
+        } else {
+          throw new Error(`${response.status}`)
+        }
+      } catch (err) {
+        alert(err)
       }
     }
   },
+  mounted() {
+    this.fetchData()
+  }
 })
 </script>
 

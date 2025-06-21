@@ -11,11 +11,23 @@ con = pymysql.connect(host='localhost',
                       charset='utf8')
 
 app = Flask(__name__)
-CORS(app, resources={r"/login": {"origins": "*"}})
-CORS(app, resources={r"/register": {"origins": "*"}})
+CORS(app)
 
-now_user = 0
+now_user = ""
+now_id = 0
 now_role = ""
+
+
+@app.route('/name', methods=['GET', 'POST'])
+def oper():
+    global now_user, now_role, now_id
+    data = request.get_json()
+    op = data.get('op')
+    if op == 'cancel':
+        now_user, now_id, now_role = "", 0, ""
+        return jsonify({'status': 'success'})
+    elif op == 'get':
+        return jsonify({'name': now_user, "role": now_role})
 
 
 @app.route('/register', methods=['POST'])
@@ -97,8 +109,8 @@ def login():
     if result[1] != password:
         return jsonify({'message': "密码错误"}), 403
 
-    global now_user, now_role
-    now_user, now_role = result[0], result[2]
+    global now_user, now_role, now_id
+    now_id, now_role, now_user = result[0], result[2], username
     return jsonify({
         'message': 0,
         'id': now_user,
