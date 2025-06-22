@@ -19,28 +19,16 @@ import NavBar from './components/NavBar.vue'
 
 export default {
   name: 'App',
-
-  // 1. 在 components 中注册子组件
   components: {
     NavBar
   },
 
-  // （可选）2. 如果未来需要全局状态、计算属性或方法，都写在这里
   data() {
-    return {
-      // 比如可以在这里声明一些响应式数据
-      // message: 'Hello Vue!'
-    }
   },
+
   computed: {
-    // 比如根据路由 meta 控制布局显示
-    // hideLayout() {
-    //   return this.$route.meta.hideLayout
-    // }
   },
   methods: {
-    // 如果需要在根组件中处理事件，也写在这里
-    // someMethod() { … }
   }
 }
 </script>
@@ -76,6 +64,7 @@ body,
   flex: 1 1 auto;
   overflow: auto;
   padding: 0;
+  background-color: #EFF2F5;
 }
 
 .header {

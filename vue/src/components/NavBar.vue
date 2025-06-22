@@ -8,6 +8,12 @@
           height="50" class="link-img"></a>
       <a href="https://gitee.com/mayoi_Akira" target="_blank"><img src="../assets/gittee.png" width="35" height="35"
           class="link-img"></a>
+      <a href="https://www.luogu.com.cn/user/1626844" target="_blank"><img src="../assets/luogu.png" width="50"
+          height="50" class="link-img"></a>
+      <a href="https://codeforces.com/profile/mayoi_Akira" target="_blank"><img src="../assets/codeforces.png"
+          width="37" height="45" class="link-img"></a>
+      <a href="https://ac.nowcoder.com/acm/contest/profile/588125209" target="_blank"><img src="../assets/nowcoder.png"
+          width="90" height="40" class="link-img"></a>
     </div>
     <el-menu-item index="2"><img src="../assets/home.png" width="20" height="20">&nbsp;主页</el-menu-item>
     <el-menu-item index="3">数据集管理</el-menu-item>
@@ -30,15 +36,16 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'NavMenu',
-
+  inject: ['user'],
   data() {
     return {
       activeIndex: '1',
       user_name: "",
-      role: ""
+      role: "",
+      back_end: "http://127.0.0.1:5000",
+      // back_end: "https://frp-boy.com:12771",
     }
   },
-
   methods: {
     handleSelect(key: string, keyPath: string[]) {
       console.log(key)
@@ -52,12 +59,12 @@ export default defineComponent({
         this.$router.push({ name: 'predict' })
       else if (keyPath[1] === '6-2') {
         this.cancel()
-        this.$router.push({ name: 'login' })
+        this.$router.replace({ name: 'login' })
       }
     },
     async fetchData() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/name', {
+        const response = await fetch(`${this.back_end}/name`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'get' }),
@@ -66,22 +73,23 @@ export default defineComponent({
           const data = await response.json()
           if (data.id == 0 && this.$route.name != 'login') {
             alert("未登录，请前往登录");
-            this.$router.push({ name: 'login' })
+            this.$router.replace({ name: 'login' })
             return
           }
-          this.user_name = data.name
+          this.user.name = data.name
           this.role = data.role
         } else {
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(err)
+        alert(`网络错误 ${err}`)
+        this.$router.replace({ name: 'login' })
       }
 
     },
     async cancel() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/name', {
+        const response = await fetch(`${this.back_end}/name`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'cancel' }),
@@ -92,7 +100,8 @@ export default defineComponent({
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(err)
+        alert(`网络错误 ${err}`)
+
       }
     }
   },

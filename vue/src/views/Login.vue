@@ -1,6 +1,7 @@
 <script lang="ts">
 export default {
   name: 'Login',
+  inject: ['user'],
   data() {
     return {
       username: '',
@@ -13,13 +14,16 @@ export default {
       regErrorMessage: '',
       showPassword: 0,
       showConPassword: 0,
+      back_end: "http://127.0.0.1:5000",
+      // back_end: "frp-boy.com:12771",
+
     }
   },
   methods: {
     async handleLogin() {
       this.errorMessage = ''
       try {
-        const response = await fetch('http://127.0.0.1:5000/login', {
+        const response = await fetch(`${this.back_end}/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: this.username, password: this.password }),
@@ -27,7 +31,7 @@ export default {
         const data = await response.json()
 
         if (response.ok) {
-          this.$router.push({ name: 'home' })
+          this.$router.replace({ name: 'home' })
         } else {
           this.errorMessage = data.message
         }
@@ -39,7 +43,7 @@ export default {
     async handleRegister() {
       this.regErrorMessage = ''
       try {
-        const response = await fetch('http://127.0.0.1:5000/register', {
+        const response = await fetch(`${this.back_end}/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -69,7 +73,7 @@ export default {
     },
     async fetchData() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/name', {
+        const response = await fetch(`${this.back_end}/name`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ op: 'get' }),
@@ -84,7 +88,7 @@ export default {
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(err)
+        alert(`网络异常 ${err}`)
       }
 
     },
@@ -110,7 +114,7 @@ export default {
         <!-- <h2>登录</h2> -->
         <form @submit.prevent="handleLogin">
           <div class="form-group">
-            <label for="username">用户名</label>
+            <label for="username">用户名{{ user.name }}</label>
             <input id="username" v-model="username" type="text" placeholder="请输入用户名" required />
           </div>
           <div class="form-group">
