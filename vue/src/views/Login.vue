@@ -114,7 +114,7 @@ export default {
         <!-- <h2>登录</h2> -->
         <form @submit.prevent="handleLogin">
           <div class="form-group">
-            <label for="username">用户名{{ user.name }}</label>
+            <label for="username">用户名</label>
             <input id="username" v-model="username" type="text" placeholder="请输入用户名" required />
           </div>
           <div class="form-group">

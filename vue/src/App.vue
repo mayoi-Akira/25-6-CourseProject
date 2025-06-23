@@ -1,7 +1,5 @@
-<!-- src/App.vue -->
 <template>
   <div id="app">
-    <!-- 使用选项式 API 注册的 NavBar 组件 -->
     <div class="common-layout">
       <el-container class="app-container w-full">
         <el-header v-if="!$route.meta.hide" class="header">

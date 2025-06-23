@@ -2,6 +2,7 @@ import pymysql
 import re
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import random
 
 con = pymysql.connect(host='localhost',
                       port=3306,
@@ -16,6 +17,67 @@ CORS(app)
 now_user = ""
 now_id = 0
 now_role = ""
+
+st = []
+
+
+@app.route('/stati', methods=['GET'])
+def get_stai():
+    try:
+        sql = '''
+            select count(*) from users
+        '''
+        cur = con.cursor()
+        cur.execute(sql)
+        user_num = cur.fetchone()[0]
+
+        sql = f'''
+            select count(*) from models
+            where user_id = {now_id}
+        '''
+        cur.execute(sql)
+        model_num = cur.fetchone()[0]
+
+        sql = f'''select count(*), max(test_acc), avg(test_acc), sum(train_time)  from experiments
+            where user_id = {now_id}
+            '''
+        cur.execute(sql)
+        exp_num, max_acc, avg_acc, train_time = cur.fetchone()
+        if max_acc == None:
+            max_acc = 0
+        if avg_acc == None:
+            avg_acc = 0
+        if train_time == None:
+            train_time = 0
+        print(exp_num, max_acc, avg_acc, train_time)
+        return jsonify({
+            'user_num': user_num,
+            'model_num': model_num,
+            'exp_num': exp_num,
+            'max_acc': max_acc,
+            'avg_acc': avg_acc,
+            'train_time': train_time
+        })
+    except:
+        return jsonify({'error': '数据库错误'}), 500
+
+
+@app.route('/poem', methods=['GET'])
+def poem():
+    global st
+    l = []
+    with open('./assets/poem.txt', 'r', encoding='utf-8') as f:
+        l = [i for i in f if i not in st]
+        f.close()
+    p = random.choice(l)
+    st.append(p)
+    if (len(st) * 2 >= 30):
+        st.pop(0)
+    p = p.split(' ')
+    try:
+        return jsonify({'first': p[0], 'second': p[1]})
+    except:
+        return jsonify({'first': 'error', 'second': p})
 
 
 @app.route('/name', methods=['GET', 'POST'])
