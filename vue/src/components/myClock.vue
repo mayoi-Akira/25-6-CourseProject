@@ -36,6 +36,6 @@ export default defineComponent({
 <style scoped>
 .clock {
   font-size: 2rem;
-  font-family: monospace;
+  font-family: "consolas";
 }
 </style>

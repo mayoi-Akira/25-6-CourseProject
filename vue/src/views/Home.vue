@@ -62,7 +62,7 @@ export default {
 <template>
   <!-- 最上方欢迎栏-->
   <div class="welcome">
-    <div style="position:absolute;width:auto; height:auto; margin-top: 2%; left:5%">
+    <div style="position:absolute;width:auto; height:auto; margin-top: 1.6%; left:5%;">
       <i>Hello, {{ user.name }} ~</i>
     </div>
     <div class="time-container">
@@ -228,7 +228,7 @@ export default {
   /* padding-bottom: 2%; */
   position: absolute;
   right: 10%;
-  font-family: '楷体';
+  font-family: '华文行楷';
   height: 100%;
   margin-bottom: 10%;
   padding-left: 2%;
