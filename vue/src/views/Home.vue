@@ -19,7 +19,10 @@ export default {
         max_acc: 0.0,
         avg_acc: 0.0,
         train_time: 0,
-      }
+      },
+      video: "//player.bilibili.com/player.html?isOutside=true&bvid=BV11H4y1F7uH&p=1",
+      video_read: "",
+      // video_error: "",
     }
   },
   methods: {
@@ -47,13 +50,48 @@ export default {
         }
         this.stati = data
       } catch (err) {
-        alert(`数据获取错误: ${err}`)
+        alert(`统计数据获取错误: ${err}`)
+      }
+    },
+    async updata_video() {
+      try {
+        const response = await fetch(`${this.back_end}/video`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: "update", bv: this.video_read }),
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          console.error(response.status)
+          throw new Error(data.error)
+        }
+        this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
+      } catch (err) {
+        alert(`视频获取错误:${err}`)
+      }
+    },
+    async get_video() {
+      try {
+        const response = await fetch(`${this.back_end}/video`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ op: "get" }),
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          console.error(response.status)
+          throw new Error(data.error)
+        }
+        this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
+      } catch (err) {
+        alert(err)
       }
     }
   },
   mounted() {
     this.get_poem(),
-      this.get_stati()
+      this.get_stati(),
+      this.get_video()
   },
 
 }
@@ -145,10 +183,12 @@ export default {
     <!--右下的视频-->
     <div class="videos">
       <div class="video-recon">
-        <h3>视频推荐：</h3>
+        <p style="width: 15%;font-size: 1.5vw;">选择视频：</p>
+        <p style="width: 50%;"><input class="video-input" placeholder="输入BV号或B站链接" v-model="video_read"></input>
+        </p>
+        <button style="width: 10%;font-size: 1.2vw;" @click="updata_video">确认</button>
       </div>
-      <iframe src="//player.bilibili.com/player.html?isOutside=true&bvid=BV11H4y1F7uH&p=1" scrolling="no"
-        frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+      <iframe :src=video scrolling="no" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
     </div>
   </div>
 </template>
@@ -172,6 +212,12 @@ export default {
   display: flex;
   flex-direction: row;
   height: auto;
+}
+
+.video-input {
+  height: 5vh;
+  width: 100%;
+  font-size: 1.2vw
 }
 
 .stati {
@@ -260,10 +306,11 @@ export default {
 
 .video-recon {
   font-size: 1.5rem;
-  width: auto;
+  width: 100%;
   height: auto;
   border-radius: 1.0rem;
   padding-left: 2%;
+  display: flex;
   /* background-color: #a1eefa; */
 }
 

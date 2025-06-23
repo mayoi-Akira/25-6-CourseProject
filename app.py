@@ -4,13 +4,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import random
 
-con = pymysql.connect(host='localhost',
-                      port=3306,
-                      user='root',
-                      password='112358',
-                      database='root',
-                      charset='utf8')
-
 app = Flask(__name__)
 CORS(app)
 
@@ -21,12 +14,77 @@ now_role = ""
 st = []
 
 
+@app.route('/video', methods=['GET', 'POST'])
+def video():
+    data = request.get_json()
+    global now_id
+    print(now_id)
+    con = pymysql.connect(host='localhost',
+                          port=3306,
+                          user='root',
+                          password='112358',
+                          database='root',
+                          charset='utf8')
+    try:
+        if data.get('op') == 'update':
+            url = data.get('bv')
+            print(url)
+            pattern = re.compile(
+                r'^(?:https?://(?:www\.)?bilibili\.com/video/)?'
+                r'(BV[0-9A-Za-z]{10})'
+                r'(?:/)?'
+                r'(?:\?.*)?$')
+            m = pattern.search(url)
+            # print(m)
+            if m:
+                bv = m.group(1)
+                cur = con.cursor()
+                sql = f'''
+                    update users
+                    set bv = "{bv}"
+                    where id = {now_id}
+                '''
+                try:
+                    cur.execute(sql)
+                    con.commit()
+                    cur.close()
+                except:
+                    return jsonify({'error': '数据库错误'}), 500
+                return jsonify({'bv': bv})
+            else:
+                return jsonify({'error': "请按要求正确输入"}), 500
+        elif data.get('op') == 'get':
+            cur = con.cursor()
+            sql = f'''
+                select bv from users
+                where id = {now_id}
+            '''
+            try:
+                cur.execute(sql)
+                bv = cur.fetchone()[0]
+                cur.close()
+                if not bv:
+                    bv = 'BV11H4y1F7uH'
+                return jsonify({'bv': bv})
+            except:
+                return jsonify({'error': '数据库错误'}), 500
+
+    except:
+        return jsonify({'error': '未知错误'}), 500
+
+
 @app.route('/stati', methods=['GET'])
 def get_stai():
     try:
         sql = '''
             select count(*) from users
         '''
+        con = pymysql.connect(host='localhost',
+                              port=3306,
+                              user='root',
+                              password='112358',
+                              database='root',
+                              charset='utf8')
         cur = con.cursor()
         cur.execute(sql)
         user_num = cur.fetchone()[0]
@@ -49,7 +107,8 @@ def get_stai():
             avg_acc = 0
         if train_time == None:
             train_time = 0
-        print(exp_num, max_acc, avg_acc, train_time)
+        # print(exp_num, max_acc, avg_acc, train_time)
+        cur.close()
         return jsonify({
             'user_num': user_num,
             'model_num': model_num,
@@ -75,6 +134,7 @@ def poem():
         st.pop(0)
     p = p.split(' ')
     try:
+
         return jsonify({'first': p[0], 'second': p[1]})
     except:
         return jsonify({'first': 'error', 'second': p})
@@ -111,7 +171,12 @@ def register():
         return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及\'_\'"}), 403
     if not bool(password_pattern.fullmatch(password)):
         return jsonify({'message': "密码长度需在5-20之间，且不能含有特殊字符"}), 403
-
+    con = pymysql.connect(host='localhost',
+                          port=3306,
+                          user='root',
+                          password='112358',
+                          database='root',
+                          charset='utf8')
     cur = con.cursor()
 
     #检查用户名是否存在
@@ -143,6 +208,7 @@ def register():
 
 @app.route("/login", methods=['POST'])
 def login():
+    global now_user, now_role, now_id
     data = request.get_json()
     print(data)
     if not data:
@@ -152,18 +218,26 @@ def login():
     password = data.get('password')
 
     #查找该用户的密码
+    con = pymysql.connect(host='localhost',
+                          port=3306,
+                          user='root',
+                          password='112358',
+                          database='root',
+                          charset='utf8')
     cur = con.cursor()
     sql = f'''
         select id, password, role from users
         where username="{username}"
     '''
-    try:
-        cur.execute(sql)
-    except:
-        return jsonify({'message': "数据库错误"}), 500
+    print(now_id)
+    # try:
+    print(sql)
+    cur.execute(sql)
+    # except:
+    #     return jsonify({'message': "数据库错误"}), 500
 
     result = cur.fetchone()
-
+    cur.close()
     #未找到
     if not result:
         return jsonify({'message': "用户不存在"}), 403
@@ -171,8 +245,8 @@ def login():
     if result[1] != password:
         return jsonify({'message': "密码错误"}), 403
 
-    global now_user, now_role, now_id
     now_id, now_role, now_user = result[0], result[2], username
+    print(now_id)
     return jsonify({
         'message': 0,
         'id': now_user,

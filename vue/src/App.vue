@@ -1,14 +1,15 @@
 <template>
   <div id="app">
-    <div class="common-layout">
-      <el-container class="app-container w-full">
-        <el-header v-if="!$route.meta.hide" class="header">
-          <NavBar />
-        </el-header>
-        <el-main v-if="!$route.meta.hide"><router-view /></el-main>
-        <router-view v-else></router-view>
-      </el-container>
-    </div>
+
+    <el-container class="app-container w-full">
+      <el-header v-if="!$route.meta.hide" class="header">
+        <NavBar />
+      </el-header>
+
+      <el-main v-if="!$route.meta.hide"><router-view /></el-main>
+      <router-view v-else></router-view>
+    </el-container>
+
   </div>
 </template>
 

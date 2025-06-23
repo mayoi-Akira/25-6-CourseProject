@@ -24,7 +24,7 @@
         <img src="../assets/user_img.jpg" height="45" width="45" class="user_img" />
       </template>
       <el-menu-item index="6-1"><img src="../assets/user_img.jpg" height="20" width="20" class="user_img" />
-        &nbsp;&nbsp;{{ user_name }}</el-menu-item>
+        &nbsp;&nbsp;{{ user.name }}</el-menu-item>
       <el-menu-item index="6-1">个人主页</el-menu-item>
       <el-menu-item index="6-2">退出登录</el-menu-item>
     </el-sub-menu>
@@ -40,8 +40,6 @@ export default defineComponent({
   data() {
     return {
       activeIndex: '1',
-      user_name: "",
-      role: "",
       back_end: "http://127.0.0.1:5000",
       // back_end: "https://frp-boy.com:12771",
     }

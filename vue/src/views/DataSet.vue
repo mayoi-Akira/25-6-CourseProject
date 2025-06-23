@@ -1,5 +1,5 @@
 <template>
-  <h1>sbLYX</h1>
+  <h1>帅比LYX</h1>
 </template>
 
 <style></style>
