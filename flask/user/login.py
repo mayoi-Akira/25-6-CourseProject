@@ -2,6 +2,7 @@ import pymysql
 import re
 from flask import Flask, request, Blueprint, jsonify
 from flask_cors import CORS
+from sql_connect import connect
 
 login_bp = Blueprint('login', __name__)
 register_bp = Blueprint('register', __name__)
@@ -9,12 +10,7 @@ register_bp = Blueprint('register', __name__)
 
 @login_bp.route('/login', methods=['POST'])
 def login():
-    con = pymysql.connect(host='localhost',
-                          port=3306,
-                          user='root',
-                          password='112358',
-                          database='root',
-                          charset='utf8')
+    con = connect()
     cur = con.cursor()
     sql = '''
         select id, name, role from now
@@ -34,12 +30,6 @@ def login():
     password = data.get('password')
 
     #查找该用户的密码
-    con = pymysql.connect(host='localhost',
-                          port=3306,
-                          user='root',
-                          password='112358',
-                          database='root',
-                          charset='utf8')
     cur = con.cursor()
     sql = f'''
         select id, password, role from users
@@ -100,12 +90,7 @@ def register():
         return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及\'_\'"}), 403
     if not bool(password_pattern.fullmatch(password)):
         return jsonify({'message': "密码长度需在5-20之间，且不能含有特殊字符"}), 403
-    con = pymysql.connect(host='localhost',
-                          port=3306,
-                          user='root',
-                          password='112358',
-                          database='root',
-                          charset='utf8')
+    con = connect()
     cur = con.cursor()
 
     #检查用户名是否存在

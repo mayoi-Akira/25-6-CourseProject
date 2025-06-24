@@ -2,6 +2,7 @@ import pymysql
 import re
 from flask import Flask, request, Blueprint, jsonify
 from flask_cors import CORS
+from sql_connect import connect
 
 stati_bp = Blueprint('stati', __name__)
 name_bp = Blueprint('name', __name__)
@@ -11,12 +12,7 @@ video_bp = Blueprint('video', __name__)
 @stati_bp.route('/stati', methods=['GET'])
 def get_stati():
     try:
-        con = pymysql.connect(host='localhost',
-                              port=3306,
-                              user='root',
-                              password='112358',
-                              database='root',
-                              charset='utf8')
+        con = connect()
         cur = con.cursor()
         sql = '''
             select id from now
@@ -64,12 +60,7 @@ def get_stati():
 
 @name_bp.route('/name', methods=['GET', 'POST'])
 def oper():
-    con = pymysql.connect(host='localhost',
-                          port=3306,
-                          user='root',
-                          password='112358',
-                          database='root',
-                          charset='utf8')
+    con = connect()
     cur = con.cursor()
     sql = '''
         select id, name, role from now
@@ -101,12 +92,7 @@ def oper():
 @video_bp.route('/video', methods=['GET', 'POST'])
 def video():
     data = request.get_json()
-    con = pymysql.connect(host='localhost',
-                          port=3306,
-                          user='root',
-                          password='112358',
-                          database='root',
-                          charset='utf8')
+    con = connect()
     cur = con.cursor()
     sql = '''
         select id from now

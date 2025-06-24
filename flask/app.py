@@ -6,6 +6,7 @@ import random
 
 from user.login import login_bp, register_bp
 from user.get_data import stati_bp, name_bp, video_bp
+from user.dataset import dataset_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +16,7 @@ app.register_blueprint(register_bp)
 app.register_blueprint(stati_bp)
 app.register_blueprint(name_bp)
 app.register_blueprint(video_bp)
+app.register_blueprint(dataset_bp)
 
 st = []
 

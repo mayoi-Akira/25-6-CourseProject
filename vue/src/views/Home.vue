@@ -67,7 +67,7 @@ export default {
         }
         this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
       } catch (err) {
-        this.$message.error(`视频获取错误:${err}`)
+        this.$message.error(`${err}`)
       }
     },
     async get_video() {

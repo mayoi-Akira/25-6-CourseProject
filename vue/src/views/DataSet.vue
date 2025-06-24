@@ -36,15 +36,18 @@ export default {
     async uploadDataset() {
       if (!this.uploadFile) return this.$message.warning('请选择文件')
       const form = new FormData()
-      form.append('file', this.uploadFile)
+      form.append('zip_file', this.uploadFile)
       try {
         const response = await fetch(`${this.back_end}/datasets`, { method: 'POST', body: form })
-        if (!response.ok) throw new Error(`上传失败 ${response.status}`)
+        if (!response.ok) {
+          const data = await response.json()
+          console.error(response.status)
+          throw new Error(`${data.error}`)
+        }
         this.$message.success('上传成功')
         this.getDatasets()
       } catch (err) {
-        console.error(err)
-        this.$message.error('上传失败')
+        this.$message.error(`${err}`)
       }
     },
     async deleteDataset(id: number) {
