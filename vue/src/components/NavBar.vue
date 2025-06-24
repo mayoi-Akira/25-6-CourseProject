@@ -70,6 +70,7 @@ export default defineComponent({
         if (response.ok) {
           const data = await response.json()
           if (data.id == 0 && this.$route.name != 'login') {
+            this.$message.error("未登录")
             this.$router.replace({ name: 'login' })
             return
           }

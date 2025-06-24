@@ -106,7 +106,7 @@ export default {
     </div>
     <div class="time-container">
       <el-icon style="margin-top: 5%;margin-right: 2%;">
-        <Clock />
+        <Clock style="color:#409eff;" />
       </el-icon>
       <myClock />
     </div>
@@ -131,7 +131,7 @@ export default {
         <p>
         <div>
           <el-icon>
-            <UserFilled />
+            <UserFilled style="color:#409eff" />
           </el-icon>
           &nbsp;用户数量：
         </div>
@@ -141,7 +141,7 @@ export default {
         <p>
         <div>
           <el-icon>
-            <Tools />
+            <Tools style="color:#409eff" />
           </el-icon>
           &nbsp;实验次数：
         </div>
@@ -152,7 +152,7 @@ export default {
         <p>
         <div>
           <div><el-icon>
-              <Grid />
+              <Grid style="color:#409eff" />
             </el-icon>&nbsp;模型数量：</div>
         </div>
         <div>{{ stati.model_num }}</div>
@@ -160,7 +160,7 @@ export default {
 
         <p>
         <div><el-icon>
-            <TrophyBase />
+            <TrophyBase style="color:#409eff" />
           </el-icon>&nbsp;测试集最佳准确率：</div>
         <div>{{ stati.max_acc }}</div>
         </p>
@@ -168,13 +168,13 @@ export default {
       <div class="floor" style="margin-bottom: 0px;">
         <p>
         <div> <el-icon>
-            <Opportunity />
+            <Opportunity style="color:#409eff" />
           </el-icon>&nbsp;测试集平均准确率：</div>
         <div>{{ stati.avg_acc }}</div>
         </p>
         <p>
         <div><el-icon>
-            <Timer />
+            <Timer style="color:#409eff" />
           </el-icon>&nbsp;总训练时间：</div>
         <div>{{ stati.train_time }}</div>
         </p>
@@ -184,10 +184,10 @@ export default {
     <!--右下的视频-->
     <div class="videos">
       <div class="video-recon">
-        <p style="width: 15%;font-size: 1.5vw;">选择视频：</p>
+        <p style="width: 20%;font-size: 1.5vw;">选择视频：</p>
         <p style="width: 50%;"><input class="video-input" placeholder="输入BV号或B站链接" v-model="video_read"></input>
         </p>
-        <button style="width: 10%;font-size: 1.2vw;" @click="updata_video">确认</button>
+        <button class="button" @click="updata_video">确认</button>
       </div>
       <iframe :src=video scrolling="no" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
     </div>
@@ -197,7 +197,7 @@ export default {
 <style scoped>
 .welcome {
   background-color: #ffffff;
-  width: 100%;
+  width: 90%;
   height: 15%;
   border-radius: 1.6rem;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
@@ -206,6 +206,18 @@ export default {
   font-size: 2vw;
   display: flex;
   position: relative;
+  margin-left: 5%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.button {
+  border: 1.5px solid #cccccc00;
+  width: 10%;
+  font-size: 1.2vw;
+  background-color: #409eff;
+  color: white;
+  cursor: pointer;
 }
 
 .buttom {
@@ -213,6 +225,9 @@ export default {
   display: flex;
   flex-direction: row;
   height: auto;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .video-input {
@@ -240,7 +255,7 @@ export default {
 .floor {
   border-radius: 1.6rem;
   width: 100%;
-  height: 22vh;
+  height: 40%;
   display: flex;
   margin-bottom: 3%;
 }
@@ -250,7 +265,7 @@ export default {
   font-size: 1.6vw;
   border-radius: 1.6rem;
   width: 48%;
-  height: 100%;
+  height: 95%;
   background-color: #ffffff;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
   margin-right: 2%;
@@ -291,7 +306,7 @@ export default {
 
 .my-el-button {
   position: absolute;
-  right: 4.3%;
+  right: 3.7%;
   top: 30%;
   background-color: #ffffff;
 }
