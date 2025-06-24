@@ -31,6 +31,7 @@ export default {
         const data = await response.json()
 
         if (response.ok) {
+          this.user.name = this.username
           this.$router.replace({ name: 'home' })
         } else {
           this.errorMessage = data.message

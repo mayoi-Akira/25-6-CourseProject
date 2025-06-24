@@ -83,6 +83,7 @@ export default {
           throw new Error(data.error)
         }
         this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
+        this.video_read = ""
       } catch (err) {
         alert(err)
       }
