@@ -70,17 +70,16 @@ export default defineComponent({
         if (response.ok) {
           const data = await response.json()
           if (data.id == 0 && this.$route.name != 'login') {
-            alert("未登录，请前往登录");
             this.$router.replace({ name: 'login' })
             return
           }
           this.user.name = data.name
-          this.role = data.role
+          this.user.role = data.role
         } else {
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(`网络错误 ${err}`)
+        this.$message.error(`网络错误 ${err}`)
         this.$router.replace({ name: 'login' })
       }
 
@@ -98,7 +97,7 @@ export default defineComponent({
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(`网络错误 ${err}`)
+        this.$message.error(`网络错误 ${err}`)
 
       }
     }

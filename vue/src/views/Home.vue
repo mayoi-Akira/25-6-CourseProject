@@ -50,7 +50,7 @@ export default {
         }
         this.stati = data
       } catch (err) {
-        alert(`统计数据获取错误: ${err}`)
+        this.$message.error(`统计数据获取错误: ${err}`)
       }
     },
     async updata_video() {
@@ -67,7 +67,7 @@ export default {
         }
         this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
       } catch (err) {
-        alert(`视频获取错误:${err}`)
+        this.$message.error(`视频获取错误:${err}`)
       }
     },
     async get_video() {
@@ -85,7 +85,7 @@ export default {
         this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
         this.video_read = ""
       } catch (err) {
-        alert(err)
+        this.$message.error(`${err}`)
       }
     }
   },
@@ -112,10 +112,10 @@ export default {
     </div>
     <div class="poem">
       <p class="poem-1">
-        {{ this.poem.first }}
+        {{ poem.first }}
       </p>
       <p class="poem-2">
-        {{ this.poem.second }}
+        {{ poem.second }}
       </p>
     </div>
     <el-button class="my-el-button" size="large" @click="get_poem">

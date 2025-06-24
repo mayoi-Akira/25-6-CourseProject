@@ -89,7 +89,7 @@ export default {
           throw new Error(`${response.status}`)
         }
       } catch (err) {
-        alert(`网络异常 ${err}`)
+        this.$message.error(`网络异常 ${err}`)
       }
 
     },
