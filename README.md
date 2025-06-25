@@ -50,13 +50,16 @@
 1. 进入 `vue` 目录
 2. 安装依赖：
    ```bash
-   npm install
+   npm install vue@3 vue-router@4 element-plus @element-plus/icons-vue typescript
+   ```
+   ```bash
+   npm install vite --save-dev
    ```
 3. 启动开发服务器：
    ```bash
    npm run dev
    ```
-4. 访问 http://localhost:5173
+4. 访问 https://localhost:5173
 
 ## 后端启动
 
@@ -79,5 +82,4 @@
 ## 注意事项
 
 - 前后端接口通过 CORS 跨域
-- 所有 SQL 均已使用参数占位符防注入
-- 上传仅支持 zip 文件，自动解压到指定目录
+- 上传仅支持 zip 文件，自动解压到指定目录，预计检测压缩包中必须包含对应数据集的 dataloader
