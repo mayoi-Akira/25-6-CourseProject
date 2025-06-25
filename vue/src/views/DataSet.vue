@@ -19,6 +19,7 @@ export default defineComponent({
       datasetDesc: '',
       currentPage: 1,
       pageSize: 6,
+      loading: false,
       uploadLoading: false,
       isUploadDialogVisible: false,
       showDescDialog: false,
@@ -28,7 +29,7 @@ export default defineComponent({
   methods: {
     async getDatasets() {
       try {
-        // this.loading = true
+        this.loading = true
         const userId = (this.user as any).id
         const url = `${this.back_end}/datasets?search=${encodeURIComponent(this.searchKey)}&page=${this.currentPage}&size=${this.pageSize}`
         const res = await fetch(url)
@@ -48,6 +49,9 @@ export default defineComponent({
       } catch (err: any) {
         console.error(err)
         this.$message.error(`获取数据失败: ${err.message}`)
+      }
+      finally {
+        this.loading = false
       }
     },
     handleFileChange(file: any) {
@@ -189,7 +193,7 @@ export default defineComponent({
           </el-button>
         </div>
 
-        <el-table :data="datasets" stripe :border="true" size="large"
+        <el-table :data="datasets" v-loading="loading" stripe :border="true" size="large"
           style="width: 100%;height: 100%; margin-top: 20px; font-size: 18px;" row-class-name="large-row"
           empty-text="暂无数据集">
           <el-table-column prop="name" label="数据集名称" min-width="210" />

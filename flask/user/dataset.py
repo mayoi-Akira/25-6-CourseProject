@@ -91,11 +91,13 @@ def datasets():
         '''
         cur.execute(sql)
         now_id = cur.fetchone()[0]
-        sql = f'''
+        sql = '''
             insert into datasets (user_id, name, path, size, description, create_at)
-            values({now_id}, "{name}", "{unzip_save_path}", {size/1024/1024}, "{description}", NOW())
+            values(%s, %s, %s, %s, %s, NOW())
             '''
-        cur.execute(sql)
+        cur.execute(
+            sql,
+            (now_id, name, unzip_save_path, size / 1024 / 1024, description))
         con.commit()
         cur.close()
         return jsonify({'message': '文件上传成功'})
@@ -123,19 +125,19 @@ def list_datasets():
         return jsonify({'error': '数据库错误'}), 500
     user_id = cur.fetchone()[0]
     like_pattern = f"%{search}%"
-    sql = f"""
-        select id, user_id, name, size,description, create_at
+    sql = '''
+        select id, user_id, name, size, description, create_at
         from datasets
-        where user_id = {user_id} and  name like "{like_pattern}"
+        where user_id = %s and name like %s
         order by id desc
-        limit {size} offset {offset}
-    """
+        limit %s offset %s
+    '''
     try:
-        cur.execute(sql)
+        cur.execute(sql, (user_id, like_pattern, size, offset))
         rows = cur.fetchall()
         cur.execute(
-            f'select count(*), sum(size) from datasets where user_id = {user_id} and name like "{like_pattern}"'
-        )
+            'select count(*), sum(size) from datasets where user_id = %s and name like %s',
+            (user_id, like_pattern))
         total, total_size = cur.fetchone()
         # if total_size == None:
         #     total_size = 0
@@ -169,12 +171,9 @@ def list_datasets():
 def remove(dataset_id):
     con = connect()
     cur = con.cursor()
-    sql = f'''
-        select path from datasets
-        where id = {dataset_id}
-    '''
+    sql = 'select path from datasets where id = %s'
     try:
-        cur.execute(sql)
+        cur.execute(sql, (dataset_id, ))
     except:
         cur.close()
         con.close()
@@ -182,12 +181,9 @@ def remove(dataset_id):
     path = cur.fetchone()[0]
     ab_path = os.path.abspath(path)
     shutil.rmtree(ab_path)
-    sql = f'''
-            delete from datasets
-            where id = {dataset_id}
-        '''
+    sql = 'delete from datasets where id = %s'
     try:
-        cur.execute(sql)
+        cur.execute(sql, (dataset_id, ))
     except:
         cur.close()
         con.close()

@@ -26,17 +26,12 @@ def get_stati():
         user_num = cur.fetchone()[0]
 
         # print(now_id)
-        sql = f'''
-            select count(*) from models
-            where user_id = {now_id}
-        '''
-        cur.execute(sql)
+        sql = 'select count(*) from models where user_id = %s'
+        cur.execute(sql, (now_id, ))
         model_num = cur.fetchone()[0]
         # print(model_num)
-        sql = f'''select count(*), max(test_acc), avg(test_acc), sum(train_time)  from experiments
-            where user_id = {now_id}
-            '''
-        cur.execute(sql)
+        sql = 'select count(*), max(test_acc), avg(test_acc), sum(train_time) from experiments where user_id = %s'
+        cur.execute(sql, (now_id, ))
         exp_num, max_acc, avg_acc, train_time = cur.fetchone()
         if max_acc == None:
             max_acc = 0
@@ -78,10 +73,10 @@ def oper():
         cur = con.cursor()
         sql = '''
         update now
-        set id = 0,
-            role = "user"
+        set id = %s,
+            role = %s
         '''
-        cur.execute(sql)
+        cur.execute(sql, (0, "user"))
         con.commit()
         cur.close()
         return jsonify({'status': 'success'})
@@ -122,13 +117,9 @@ def video():
             if m:
                 bv = m.group(1)
                 cur = con.cursor()
-                sql = f'''
-                    update users
-                    set bv = "{bv}"
-                    where id = {now_id}
-                '''
+                sql = 'update users set bv = %s where id = %s'
                 try:
-                    cur.execute(sql)
+                    cur.execute(sql, (bv, now_id))
                     con.commit()
                     cur.close()
                 except:
@@ -138,12 +129,9 @@ def video():
                 return jsonify({'error': "请按要求正确输入"}), 500
         elif data.get('op') == 'get':
             cur = con.cursor()
-            sql = f'''
-                select bv from users
-                where id = {now_id}
-            '''
+            sql = 'select bv from users where id = %s'
             try:
-                cur.execute(sql)
+                cur.execute(sql, (now_id, ))
                 bv = cur.fetchone()[0]
                 cur.close()
                 if not bv:

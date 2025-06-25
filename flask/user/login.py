@@ -32,13 +32,12 @@ def login():
     hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
     #查找该用户的密码
     cur = con.cursor()
-    sql = f'''
+    sql = '''
         select id, password, role from users
-        where username="{username}"
+        where username=%s
     '''
-    print(now_id)
     try:
-        cur.execute(sql)
+        cur.execute(sql, (username, ))
     except:
         return jsonify({'message': "数据库错误"}), 500
 
@@ -51,14 +50,14 @@ def login():
         return jsonify({'message': "密码错误"}), 403
 
     now_id, now_role, now_user = result[0], result[2], username
-    sql = f'''
+    sql = '''
         update now
-        set id = {now_id},
-            name = "{now_user}",
-            role = "{now_role}"
+        set id = %s,
+            name = %s,
+            role = %s
     '''
     try:
-        cur.execute(sql)
+        cur.execute(sql, (now_id, now_user, now_role))
     except:
         return jsonify({'message': "数据库错误"}), 500
     con.commit()
@@ -88,19 +87,19 @@ def register():
     password_pattern = re.compile(r'^[!-~]{5,20}$')
 
     if not bool(username_pattern.fullmatch(username)):
-        return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及\'_\'"}), 403
+        return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及'_'"}), 403
     if not bool(password_pattern.fullmatch(password)):
         return jsonify({'message': "密码长度需在5-20之间，且仅能包含可见字符"}), 403
     con = connect()
     cur = con.cursor()
 
     #检查用户名是否存在
-    sql = f'''
+    sql = '''
         select 1 from users
-        where username="{username}"
+        where username=%s
     '''
     try:
-        cur.execute(sql)
+        cur.execute(sql, (username, ))
     except:
         return jsonify({'message': "数据库错误"}), 500
 
@@ -108,13 +107,13 @@ def register():
         return jsonify({'message': "用户名已存在"}), 403
     #加入新用户
     hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    sql = f'''
+    sql = '''
         insert into users(username, password, role)
-        values("{username}", "{hash}", "{role}")
+        values(%s, %s, %s)
     '''
 
     try:
-        cur.execute(sql)
+        cur.execute(sql, (username, hash, role))
     except:
         return jsonify({'message': "数据库错误"}), 500
     con.commit()

@@ -36,6 +36,7 @@ export default {
         if (response.ok) {
           this.user.name = this.username
           this.$router.replace({ name: 'home' })
+          this.$message.success(`登录成功，欢迎${this.user.name}`)
         } else {
           this.errorMessage = data.message
         }
