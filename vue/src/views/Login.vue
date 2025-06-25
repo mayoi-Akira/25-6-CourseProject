@@ -1,9 +1,11 @@
 <script lang="ts">
+
 export default {
   name: 'Login',
   inject: ['user'],
   data() {
     return {
+      SALT: 12,
       username: '',
       password: '',
       errorMessage: '',
@@ -28,6 +30,7 @@ export default {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: this.username, password: this.password }),
         })
+
         const data = await response.json()
 
         if (response.ok) {
@@ -57,7 +60,8 @@ export default {
         const data = await response.json()
 
         if (response.ok) {
-          alert('注册成功！请返回登录')
+          this.$message.success('注册成功！')
+          // alert('注册成功！请返回登录')
           this.isRegister = false
           this.username = this.regUsername
           this.password = ''

@@ -20,7 +20,7 @@ export default {
         avg_acc: 0.0,
         train_time: 0,
       },
-      video: "//player.bilibili.com/player.html?isOutside=true&bvid=BV11H4y1F7uH&p=1",
+      video: "//www.bilibili.com/blackboard/html5mobileplayer.html?isOutside=true&bvid=BV11H4y1F7uH&p=1",
       video_read: "",
       // video_error: "",
     }
@@ -65,7 +65,7 @@ export default {
           console.error(response.status)
           throw new Error(data.error)
         }
-        this.video = `//player.bilibili.com/player.html?isOutside=true&bvid=${data.bv}&p=1`
+        this.video = `//www.bilibili.com/blackboard/html5mobileplayer.html?isOutside=true&bvid=${data.bv}&p=1`
       } catch (err) {
         this.$message.error(`${err}`)
       }
@@ -189,7 +189,8 @@ export default {
         </p>
         <button class="button" @click="updata_video">确认</button>
       </div>
-      <iframe :src=video scrolling="no" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+      <iframe :src=video scrolling="no" frameborder="no" framespacing="0" allowfullscreen="true"
+        sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"></iframe>
     </div>
   </div>
 </template>

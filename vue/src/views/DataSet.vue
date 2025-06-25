@@ -1,7 +1,7 @@
 <script lang="ts">
 import myClock from '../components/myClock.vue'
 import { defineComponent } from 'vue'
-import { ElMessageBox } from 'element-plus'
+import { descriptionItemProps, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
 export default defineComponent({
@@ -11,38 +11,43 @@ export default defineComponent({
   data() {
     return {
       back_end: 'http://127.0.0.1:5000',
-      datasets: [] as Array<{ id: number; user_id: number; name: string; path: string; size: number; created_at: string }>,
+      datasets: [] as Array<{ id: number; user_id: number; name: string; description: string; size: number; created_at: string }>,
       stats: { dataset_num: 0, total_size: 0.0 },
       searchKey: '',
       uploadFile: null as File | null,
       datasetName: '',
       datasetDesc: '',
       currentPage: 1,
-      pageSize: 10,
-      loading: false,
+      pageSize: 6,
       uploadLoading: false,
-      isUploadDialogVisible: false
+      isUploadDialogVisible: false,
+      showDescDialog: false,
+      descDialogContent: ''
     }
   },
   methods: {
     async getDatasets() {
       try {
-        this.loading = true
+        // this.loading = true
         const userId = (this.user as any).id
-        const url = `${this.back_end}/datasets?user_id=${userId}&search=${encodeURIComponent(this.searchKey)}&page=${this.currentPage}&size=${this.pageSize}`
+        const url = `${this.back_end}/datasets?search=${encodeURIComponent(this.searchKey)}&page=${this.currentPage}&size=${this.pageSize}`
         const res = await fetch(url)
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || '获取数据失败')
+
         this.datasets = data.list.map((d: any) => ({
           ...d,
+          description: d.description || '-',
           created_at: d.created_at ? new Date(d.created_at).toLocaleString() : '-'
         }))
-        this.stats.dataset_num = data.total // 新增：设置总数
+
+        this.stats.dataset_num = data.total
+        this.stats.total_size = data.total_size || 0
+
+        console.log(this.stats.total_size)
       } catch (err: any) {
         console.error(err)
         this.$message.error(`获取数据失败: ${err.message}`)
-      } finally {
-        this.loading = false
       }
     },
     handleFileChange(file: any) {
@@ -53,6 +58,7 @@ export default defineComponent({
     },
     async uploadDataset() {
       if (!this.uploadFile) return this.$message.warning('请选择文件')
+      if (!this.datasetName) { return this.$message.warning('请输入数据集名称'); }
       this.uploadLoading = true
 
       const form = new FormData()
@@ -85,6 +91,8 @@ export default defineComponent({
         `确定要删除数据集 "${name}" 吗？此操作不可恢复。`,
         '警告',
         {
+
+          buttonSize: 'large',
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           type: 'warning',
@@ -115,6 +123,10 @@ export default defineComponent({
     formatSize(size: number) {
       if (size < 1024) return `${size.toFixed(2)} MB`
       return `${(size / 1024).toFixed(2)} GB`
+    },
+    showDesc(desc: string) {
+      this.descDialogContent = desc
+      this.showDescDialog = true
     }
   },
   mounted() {
@@ -161,8 +173,8 @@ export default defineComponent({
 
       <el-card class="main-card">
         <div class="toolbar">
-          <el-input v-model="searchKey" placeholder="搜索数据集..." clearable class="search-input"
-            @keydown.enter.native="getDatasets">
+          <el-input v-model="searchKey" placeholder="搜索数据集..." clearable class="search-input large-input"
+            @input="getDatasets">
             <template #prefix>
               <el-icon>
                 <Search />
@@ -170,23 +182,31 @@ export default defineComponent({
             </template>
           </el-input>
 
-          <el-button type="primary" @click="isUploadDialogVisible = true" class="upload-button">
+          <el-button type="primary" @click="isUploadDialogVisible = true" class="upload-button large-button">
             <el-icon>
               <Plus />
             </el-icon> 上传数据集
           </el-button>
         </div>
 
-        <el-table :data="datasets" v-loading="loading" stripe style="width: 100%;height: 100%; margin-top: 20px;"
+        <el-table :data="datasets" stripe :border="true" size="large"
+          style="width: 100%;height: 100%; margin-top: 20px; font-size: 18px;" row-class-name="large-row"
           empty-text="暂无数据集">
-          <el-table-column prop="name" label="数据集名称" min-width="180" />
-          <el-table-column label="大小" width="120">
+          <el-table-column prop="name" label="数据集名称" min-width="210" />
+          <el-table-column label="大小" width="190">
             <template #default="{ row }">
               {{ formatSize(row.size) }}
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="文件名" min-width="200" />
-          <el-table-column prop="created_at" label="创建时间" width="180" />
+
+          <el-table-column label="信息" min-width="190">
+            <template #default="{ row }">
+              <span class="description-cell">{{ row.description || '-' }}</span>
+              <el-link v-if="row.description && row.description.length > 20" type="primary"
+                @click="showDesc(row.description)" style="margin-left:8px;">查看全部</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="created_at" label="创建时间" width="210" />
           <el-table-column label="操作" width="100" align="center">
             <template #default="{ row }">
               <el-button type="danger" size="small" plain @click="confirmDelete(row.id, row.name)">
@@ -199,7 +219,7 @@ export default defineComponent({
         </el-table>
 
         <el-pagination class="pagination" background layout="total, prev, pager, next, jumper"
-          :current-page="currentPage" :page-size="pageSize" :total="stats.dataset_num"
+          :current-page="currentPage" :page-size="pageSize" :total="stats.dataset_num" size="large"
           @current-change="handlePageChange" />
       </el-card>
     </div>
@@ -230,30 +250,39 @@ export default defineComponent({
         </el-form-item>
 
         <el-form-item label="数据集名称">
-          <el-input v-model="datasetName" placeholder="请输入数据集名称" clearable />
+          <!-- 添加字符限制 -->
+          <el-input v-model="datasetName" placeholder="请输入数据集名称（必填）" clearable maxlength="15" show-word-limit />
         </el-form-item>
 
         <el-form-item label="描述信息">
-          <el-input v-model="datasetDesc" type="textarea" placeholder="请输入数据集描述信息" :rows="3" />
+          <!-- 添加字符限制 -->
+          <el-input v-model="datasetDesc" type="textarea" placeholder="请输入数据集描述信息（可选）" :rows="3" maxlength="100"
+            show-word-limit size="large" />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="isUploadDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="uploadDataset" :disabled="!uploadFile" :loading="uploadLoading">
+        <el-button @click=" isUploadDialogVisible = false" size="large">取消</el-button>
+        <el-button type="primary" @click="uploadDataset" :disabled="!uploadFile || !datasetName"
+          :loading="uploadLoading" size="large">
           确认上传
         </el-button>
       </template>
+    </el-dialog>
+
+    <!-- 描述信息查看全部对话框 -->
+    <el-dialog v-model="showDescDialog" title="详细信息" width="400px" :show-close="true">
+      <div style="white-space: pre-wrap;">{{ descDialogContent }}</div>
     </el-dialog>
   </div>
 </template>
 
 <style scoped>
 .page-container {
-  width: 100%;
+  width: 90%;
   height: 100%;
   padding: 20px;
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
 }
 
@@ -306,7 +335,7 @@ export default defineComponent({
 }
 
 .stats-card {
-  height: 100%;
+  /* height: 100%; */
   /* height: fit-content; */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -343,7 +372,8 @@ export default defineComponent({
 }
 
 .main-card {
-  height: 100%;
+  height: auto;
+  display: inline-table;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: none;
@@ -396,7 +426,7 @@ export default defineComponent({
 
   .upload-text {
     text-align: center;
-    font-size: 14px;
+    font-size: 15px;
     color: #606266;
 
     .upload-hint {
@@ -439,5 +469,55 @@ export default defineComponent({
   .el-icon {
     margin-right: 6px;
   }
+}
+
+.el-table .el-table__cell {
+  font-size: 18px;
+  padding: 18px 0;
+}
+
+.el-table .large-row {
+  height: 60px;
+}
+
+.el-table .el-link {
+  font-size: 16px;
+}
+
+.el-table .description-cell {
+  font-size: 16px;
+  max-width: 170px;
+}
+
+.el-pagination {
+  font-size: 17px;
+}
+
+.description-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.search-input.large-input {
+  font-size: 1vw;
+}
+
+.upload-button.large-button {
+  height: 2vw;
+  width: 15%;
+  font-size: 1vw;
+}
+
+.el-form-item .el-input {
+  font-size: 18px;
+  height: 44px;
+}
+
+.el-form-item .el-upload {
+  font-size: 18px;
 }
 </style>

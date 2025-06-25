@@ -3,6 +3,7 @@ import re
 from flask import Flask, request, Blueprint, jsonify
 from flask_cors import CORS
 from sql_connect import connect
+import hashlib
 
 login_bp = Blueprint('login', __name__)
 register_bp = Blueprint('register', __name__)
@@ -28,7 +29,7 @@ def login():
 
     username = data.get('username')
     password = data.get('password')
-
+    hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
     #查找该用户的密码
     cur = con.cursor()
     sql = f'''
@@ -46,7 +47,7 @@ def login():
     if not result:
         return jsonify({'message': "用户不存在"}), 403
 
-    if result[1] != password:
+    if result[1] != hash:
         return jsonify({'message': "密码错误"}), 403
 
     now_id, now_role, now_user = result[0], result[2], username
@@ -89,7 +90,7 @@ def register():
     if not bool(username_pattern.fullmatch(username)):
         return jsonify({'message': "用户名长度需在5-20之间，且仅能包含字母数字以及\'_\'"}), 403
     if not bool(password_pattern.fullmatch(password)):
-        return jsonify({'message': "密码长度需在5-20之间，且不能含有特殊字符"}), 403
+        return jsonify({'message': "密码长度需在5-20之间，且仅能包含可见字符"}), 403
     con = connect()
     cur = con.cursor()
 
@@ -106,9 +107,10 @@ def register():
     if cur.fetchone():
         return jsonify({'message': "用户名已存在"}), 403
     #加入新用户
+    hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
     sql = f'''
         insert into users(username, password, role)
-        values("{username}", "{password}", "{role}")
+        values("{username}", "{hash}", "{role}")
     '''
 
     try:

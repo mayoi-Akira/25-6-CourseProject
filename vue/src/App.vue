@@ -69,6 +69,6 @@ body,
 .header {
   height: 60px;
   /* 或 10vh，建议用px */
-  width: 100%;
+  width: 99.8%;
 }
 </style>

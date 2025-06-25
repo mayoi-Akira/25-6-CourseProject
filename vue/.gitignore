@@ -28,3 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+dataset_zip
+dataset
